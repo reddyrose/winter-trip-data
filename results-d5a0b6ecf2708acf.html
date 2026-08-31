@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Winter Trip — Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peach:#FF9A56; --peach-deep:#FF7A3D; --sun:#FFC93C;
+    --pink:#FF6F91; --pink-deep:#FF4D75; --cream:#FFF6EC;
+    --card:#FFFFFF; --ink:#4A2E2A; --ink-soft:#8A6B63;
+    --line:#FFE0CC; --chip-bg:#FFF0DE;
+    --shadow:0 10px 26px rgba(255,111,145,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 500px at 10% -5%, #FFE3C2 0%, transparent 55%),
+      radial-gradient(800px 500px at 100% 0%, #FFD9E4 0%, transparent 55%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Nunito',sans-serif;
+    min-height:100vh;
+    padding:36px 0 80px;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px;}
+  h1{
+    font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:clamp(26px,4vw,38px);margin:0 0 6px;color:var(--ink);
+  }
+  h1 .hl{color:var(--pink-deep);}
+  .meta{font-size:13.5px;color:var(--ink-soft);margin:0 0 4px;}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0 30px;}
+  button.btn{
+    background:linear-gradient(90deg,var(--peach),var(--pink-deep));color:#fff;border:none;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:13.5px;
+    padding:9px 18px;border-radius:16px;cursor:pointer;
+  }
+  button.btn:disabled{opacity:0.5;cursor:not-allowed;}
+  label.auto{font-size:12.5px;color:var(--ink-soft);font-weight:700;display:inline-flex;align-items:center;gap:6px;}
+  .status{font-size:12.5px;color:var(--ink-soft);font-weight:700;}
+
+  section{
+    background:var(--card);border:2px solid var(--line);border-radius:20px;
+    padding:20px 20px 16px;margin-bottom:22px;box-shadow:0 6px 16px rgba(255,111,145,0.10);
+  }
+  section h2{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:18px;margin:0 0 3px;color:var(--ink);
+  }
+  section .sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;}
+
+  .rbar-row{margin-bottom:13px;}
+  .rbar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin-bottom:5px;gap:10px;}
+  .rbar-top .rname{color:var(--ink);font-weight:700;}
+  .rbar-top .rnum{color:var(--pink-deep);font-weight:800;white-space:nowrap;}
+  .rbar-top .rnum small{color:var(--ink-soft);font-weight:700;font-size:11.5px;}
+  .rbar-track{height:11px;background:var(--chip-bg);border-radius:6px;overflow:hidden;}
+  .rbar-fill{height:100%;background:linear-gradient(90deg,var(--sun),var(--pink-deep));border-radius:6px;transition:width .4s ease;}
+  .rank-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:20px;height:20px;padding:0 5px;border-radius:6px;margin-right:7px;
+    background:var(--pink-deep);color:#fff;font-size:11px;font-weight:800;
+  }
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  td.name{font-weight:800;color:var(--ink);white-space:nowrap;}
+  td .pick{display:block;}
+  td .pk-rank{color:var(--pink-deep);font-weight:800;margin-right:5px;}
+  tr:last-child td{border-bottom:none;}
+
+  .empty{font-size:13.5px;color:var(--ink-soft);border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;}
+  .err{color:var(--pink-deep);font-weight:700;}
+  .foot{font-size:11.5px;color:var(--ink-soft);margin-top:8px;line-height:1.6;}
+  code{background:var(--chip-bg);padding:1px 6px;border-radius:6px;font-size:11.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Winter trip — <span class="hl">results</span></h1>
+  <p class="meta" id="meta">Loading…</p>
+  <div class="toolbar">
+    <button class="btn" id="refreshBtn">Refresh</button>
+    <label class="auto"><input type="checkbox" id="autoChk" checked> auto every 30s</label>
+    <span class="status" id="status"></span>
+  </div>
+
+  <section>
+    <h2>🏆 Ranked score</h2>
+    <p class="sub">1st pick = 3 pts · 2nd = 2 · 3rd = 1. Ballot count in grey.</p>
+    <div id="scoreList"><div class="empty">No votes yet.</div></div>
+  </section>
+
+  <section>
+    <h2>🥇 First-choice count</h2>
+    <p class="sub">How many people ranked each place #1.</p>
+    <div id="firstList"><div class="empty">No votes yet.</div></div>
+  </section>
+
+  <section>
+    <h2>🧾 Every ballot</h2>
+    <p class="sub" id="ballotSub">One row per person.</p>
+    <div id="ballotWrap"><div class="empty">No votes yet.</div></div>
+  </section>
+
+  <p class="foot">
+    Private link — not linked from the poll and marked <code>noindex</code>, but it is a public file on the site.
+    Anyone who has this exact URL can open it. Rotate it by renaming the file in the repo.
+  </p>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyd4lC6zDbi3MATPhgqwJAQVj2vPuJkuG7eEuuB65LM544ZAX4VJkgI8AYEy6nZYh2v/exec";
+const MAX_PICKS = 3;
+
+const PLACES = {
+  cdmx:["🎈","Mexico City"], tampa:["🏖️","Tampa / St. Pete / Clearwater"],
+  ftlaud:["🌴","Fort Lauderdale / Miami"], merida:["🏛️","Mérida (via Cancún)"],
+  cancun:["🐠","Cancún / Playa del Carmen"], pv:["🛶","Puerto Vallarta"],
+  pr:["🌺","San Juan / Rincón, PR"], puntacana:["🍹","Punta Cana"],
+  jamaica:["🎶","Montego Bay / Negril"], curacao:["🤿","Curaçao"],
+  costarica:["🌋","Costa Rica / Guanacaste"], oahu:["🌊","Honolulu / Oahu"],
+  lima:["🍽️","Lima, Peru"], phuket:["🛕","Phuket, Thailand"],
+  bali:["🌅","Bali, Indonesia"], fiji:["🏝️","Fiji / Nadi"]
+};
+const label = id => PLACES[id] ? PLACES[id][0] + " " + PLACES[id][1] : id;
+
+let timer = null;
+
+async function load(){
+  const btn = document.getElementById('refreshBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true; status.textContent = "Loading…";
+  try{
+    const res = await fetch(API_URL, { method:"GET" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const votes = (data && Array.isArray(data.votes)) ? data.votes : [];
+    render(votes);
+    status.textContent = "";
+    document.getElementById('meta').textContent =
+      votes.length + (votes.length===1 ? " ballot" : " ballots") + " · updated " + new Date().toLocaleTimeString();
+  }catch(e){
+    status.innerHTML = '<span class="err">Could not load — ' + e.message + '</span>';
+    console.error(e);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+function render(votes){
+  const points = {}, ballots = {}, firsts = {};
+  votes.forEach(v=>{
+    (v.picks||[]).slice(0, MAX_PICKS).forEach((id,idx)=>{
+      points[id] = (points[id]||0) + (MAX_PICKS - idx);
+      ballots[id] = (ballots[id]||0) + 1;
+      if(idx===0) firsts[id] = (firsts[id]||0) + 1;
+    });
+  });
+
+  // Ranked score
+  const scored = Object.keys(points)
+    .map(id=>({id, pts:points[id], ballots:ballots[id]}))
+    .sort((a,b)=> b.pts-a.pts || b.ballots-a.ballots || label(a.id).localeCompare(label(b.id)));
+  const scoreEl = document.getElementById('scoreList');
+  if(scored.length===0){ scoreEl.innerHTML = '<div class="empty">No votes yet.</div>'; }
+  else {
+    const max = scored[0].pts;
+    scoreEl.innerHTML = scored.map(d=>`
+      <div class="rbar-row">
+        <div class="rbar-top">
+          <span class="rname">${label(d.id)}</span>
+          <span class="rnum">${d.pts} pt${d.pts===1?'':'s'} <small>· ${d.ballots} ${d.ballots===1?'ballot':'ballots'}</small></span>
+        </div>
+        <div class="rbar-track"><div class="rbar-fill" style="width:${(d.pts/max*100).toFixed(0)}%"></div></div>
+      </div>`).join('');
+  }
+
+  // First-choice count
+  const firstRanked = Object.keys(firsts)
+    .map(id=>({id, n:firsts[id]}))
+    .sort((a,b)=> b.n-a.n || label(a.id).localeCompare(label(b.id)));
+  const firstEl = document.getElementById('firstList');
+  if(firstRanked.length===0){ firstEl.innerHTML = '<div class="empty">No votes yet.</div>'; }
+  else {
+    const max = firstRanked[0].n;
+    firstEl.innerHTML = firstRanked.map(d=>`
+      <div class="rbar-row">
+        <div class="rbar-top">
+          <span class="rname">${label(d.id)}</span>
+          <span class="rnum">${d.n}</span>
+        </div>
+        <div class="rbar-track"><div class="rbar-fill" style="width:${(d.n/max*100).toFixed(0)}%"></div></div>
+      </div>`).join('');
+  }
+
+  // Every ballot
+  const wrap = document.getElementById('ballotWrap');
+  document.getElementById('ballotSub').textContent =
+    votes.length + (votes.length===1 ? " person has voted." : " people have voted.");
+  if(votes.length===0){ wrap.innerHTML = '<div class="empty">No votes yet.</div>'; }
+  else {
+    const rows = [...votes]
+      .sort((a,b)=> String(a.name).toLowerCase().localeCompare(String(b.name).toLowerCase()))
+      .map(v=>{
+        const picks = (v.picks||[]).slice(0, MAX_PICKS)
+          .map((id,idx)=>`<span class="pick"><span class="pk-rank">${idx+1}</span>${label(id)}</span>`)
+          .join('') || '<span class="pick">—</span>';
+        return `<tr><td class="name">${escapeHtml(String(v.name))}</td><td>${picks}</td></tr>`;
+      }).join('');
+    wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Ranked picks</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function setAuto(on){
+  clearInterval(timer);
+  if(on) timer = setInterval(load, 30000);
+}
+
+document.getElementById('refreshBtn').addEventListener('click', load);
+document.getElementById('autoChk').addEventListener('change', e => setAuto(e.target.checked));
+
+load();
+setAuto(true);
+</script>
+</body>
+</html>
