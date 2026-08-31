@@ -332,7 +332,7 @@
 
 <div class="results wrap" style="max-width:960px;">
   <h2>Live results 🏆</h2>
-  <p class="hint" id="resultsHint">Vote first to unlock everyone else's picks. <button class="ghost" id="refreshBtn" style="padding:4px 10px;font-size:12px;margin-left:2px;display:none;">Refresh</button></p>
+  <p class="hint" id="resultsHint"><span id="resultsHintText">Vote first to unlock everyone else's picks.</span> <button class="ghost" id="refreshBtn" style="padding:4px 10px;font-size:12px;margin-left:2px;display:none;">Refresh</button></p>
   <div id="resultsList"><div class="empty-state">🔒 Submit your vote above to see how everyone else voted.</div></div>
 </div>
 
@@ -462,12 +462,12 @@ const ALL_TAGS = [...new Set(ALL.flatMap(d=>d.tags))].sort();
 
 function unlockResults(){
   hasVoted = true;
-  document.getElementById('resultsHint').textContent = "Pulled from everyone's submitted votes.";
+  document.getElementById('resultsHintText').textContent = "Pulled from everyone's submitted votes.";
   document.getElementById('refreshBtn').style.display = 'inline-block';
 }
 function lockResults(){
   hasVoted = false;
-  document.getElementById('resultsHint').textContent = "Vote first to unlock everyone else's picks.";
+  document.getElementById('resultsHintText').textContent = "Vote first to unlock everyone else's picks.";
   document.getElementById('refreshBtn').style.display = 'none';
   document.getElementById('resultsList').innerHTML = '<div class="empty-state">🔒 Submit your vote above to see how everyone else voted.</div>';
 }
