@@ -80,8 +80,21 @@ Send that link to your friends.
 - Submitting again with the same name **replaces** their previous vote
   (name match is case-insensitive).
 - **Clear my vote** deletes their row.
-- Results unlock only after someone has voted, and are tallied as
-  "appeared in someone's top 3" (rank order is stored but not weighted).
+- Results unlock only after someone has voted. They're **rank-weighted**:
+  1st pick = 3 pts, 2nd = 2, 3rd = 1.
+
+## Round 2 — the finalist runoff (`round2.html`)
+
+`round2.html` is a second, independent vote over the 5 top finishers from
+round 1. Same mechanic (rank a top 3, 3/2/1 scoring). Its votes go to a
+separate **`Round2`** tab in the same Google Sheet — round 1 is untouched.
+
+**This needs the updated `Code.gs`.** After pasting the new
+`apps-script/Code.gs`, redeploy: **Deploy → Manage deployments → ✏️ →
+Version: New version → Deploy** (a plain Save does nothing). The old code
+ignores the `round` parameter and would file round-2 votes into round 1.
+
+Live at `https://<your-username>.github.io/winter-trip-poll/round2.html`.
 
 ## Viewing / managing responses
 

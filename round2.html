@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winter Trip — Final 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peach:#FF9A56;
+    --peach-deep:#FF7A3D;
+    --sun:#FFC93C;
+    --pink:#FF6F91;
+    --pink-deep:#FF4D75;
+    --cream:#FFF6EC;
+    --card:#FFFFFF;
+    --ink:#4A2E2A;
+    --ink-soft:#8A6B63;
+    --line:#FFE0CC;
+    --chip-bg:#FFF0DE;
+    --shadow: 0 10px 26px rgba(255,111,145,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 500px at 10% -5%, #FFE3C2 0%, transparent 55%),
+      radial-gradient(800px 500px at 100% 0%, #FFD9E4 0%, transparent 55%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Nunito', sans-serif;
+    min-height:100vh;
+    padding:0 0 70px;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+
+  header.wrap{padding:120px 20px 90px;text-align:center;}
+  h1{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:clamp(32px,5vw,48px);
+    line-height:1.06;margin:0 0 22px;color:var(--ink);
+  }
+  h1 .hl{color:var(--pink-deep);}
+  .sub{font-size:17px;line-height:1.6;color:var(--ink-soft);max-width:56ch;margin:0 auto;}
+  .sub strong{color:var(--pink-deep);font-weight:800;}
+
+  .controls{
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+    margin-top:0;margin-bottom:18px;
+  }
+  .seg{
+    display:inline-flex;background:var(--card);border-radius:14px;
+    padding:4px;border:2px solid var(--line);
+  }
+  .seg button{
+    border:none;background:transparent;padding:8px 14px;border-radius:10px;
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:13.5px;
+    color:var(--ink-soft);cursor:pointer;
+  }
+  .seg button.active{background:var(--peach);color:#fff;}
+
+  .namebar{
+    background:var(--card);border:2px solid var(--line);border-radius:16px;
+    padding:16px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+    margin-top:0;margin-bottom:26px;box-shadow:var(--shadow);
+  }
+  .namebar label{font-size:13.5px;color:var(--ink-soft);font-weight:700;white-space:nowrap;}
+  .namebar input{
+    flex:1;min-width:160px;background:var(--cream);border:2px solid var(--line);
+    color:var(--ink);font-family:'Nunito',sans-serif;font-size:15px;
+    padding:9px 12px;border-radius:10px;outline:none;
+  }
+  .namebar input:focus{border-color:var(--pink);}
+  .namebar .count{font-size:13px;color:var(--ink-soft);font-weight:700;white-space:nowrap;}
+  .namebar .count b{color:var(--pink-deep);}
+
+  .grid{
+    padding:0 20px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:16px;margin-bottom:36px;
+  }
+
+  .card{
+    position:relative;background:var(--card);border-radius:20px;
+    padding:18px;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 6px 16px rgba(255,111,145,0.10);border:2px solid transparent;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+  .card.picked{border-color:var(--pink-deep);box-shadow:var(--shadow);transform:translateY(-3px);}
+
+  .heart{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;
+    border-radius:50%;background:var(--cream);border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:15px;
+    transition:all .12s ease;
+  }
+  .card.picked .heart{background:var(--pink-deep);border-color:var(--pink-deep);color:#fff;}
+
+  .vibe-icon{font-size:26px;line-height:1;margin-bottom:6px;}
+  .card-name{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;margin:0 0 3px;padding-right:34px;}
+  .card-tag{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.4;}
+
+  .price-line{padding:8px 0;border-top:1px dashed var(--line);}
+  .price-line .lbl{color:var(--ink-soft);font-weight:700;font-size:11.5px;display:block;margin-bottom:4px;}
+  .price-line .pval{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    font-size:13px;font-weight:700;
+  }
+  .price-line a{
+    color:var(--pink-deep);font-weight:800;text-decoration:none;white-space:nowrap;
+    font-size:12.5px;background:var(--chip-bg);padding:5px 10px;border-radius:10px;flex-shrink:0;
+  }
+  .price-line a:hover{background:var(--sun);color:var(--ink);}
+
+  .vibebar{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:12px 0 6px;background:var(--chip-bg);}
+  .vibebar span{height:100%;}
+  .vibe-legend{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-soft);font-weight:700;margin-bottom:10px;}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .tag{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;background:var(--chip-bg);color:var(--peach-deep);}
+
+  .bonus-note{
+    margin-top:10px;padding:9px 11px;background:#FFF0F3;
+    border-left:3px solid var(--pink-deep);font-size:11.5px;line-height:1.5;
+    color:var(--ink);border-radius:0 10px 10px 0;
+  }
+
+  .votepanel{
+    margin-top:0;margin-bottom:32px;background:var(--card);border:2px solid var(--line);
+    border-radius:20px;padding:20px 20px 18px;box-shadow:var(--shadow);
+  }
+  .votepanel h2, .results h2{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:20px;margin:0 0 4px;color:var(--ink);}
+  .votepanel .hint, .results .hint{font-size:13px;color:var(--ink-soft);margin:0 0 14px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;min-height:20px;}
+  .chip{font-size:12px;font-weight:700;background:var(--chip-bg);color:var(--peach-deep);padding:6px 12px;border-radius:20px;}
+  .chip.empty{color:var(--ink-soft);background:transparent;border:2px dashed var(--line);}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  button.primary{
+    background:linear-gradient(90deg,var(--peach),var(--pink-deep));color:#fff;border:none;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:14.5px;
+    padding:11px 22px;border-radius:20px;cursor:pointer;
+  }
+  button.primary:disabled{opacity:0.4;cursor:not-allowed;}
+  button.ghost{
+    background:transparent;color:var(--ink-soft);border:2px solid var(--line);
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;
+    padding:9px 16px;border-radius:20px;cursor:pointer;
+  }
+  button.ghost:hover{color:var(--pink-deep);border-color:var(--pink-deep);}
+  .status{font-size:13px;color:var(--pink-deep);font-weight:700;margin-left:2px;}
+
+  .results{margin-top:0;margin-bottom:0;}
+  .rbar-row{margin-bottom:12px;}
+  .rbar-top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px;}
+  .rbar-top .rname{color:var(--ink);font-weight:700;}
+  .rbar-top .rvotes{color:var(--pink-deep);font-weight:800;}
+  .rbar-top .rballots{color:var(--ink-soft);font-weight:700;font-size:11.5px;}
+  .rbar-track{height:10px;background:var(--chip-bg);border-radius:6px;overflow:hidden;}
+  .rbar-fill{height:100%;background:linear-gradient(90deg,var(--sun),var(--pink-deep));border-radius:6px;transition:width .4s ease;}
+  .empty-state{font-size:13.5px;color:var(--ink-soft);border:2px dashed var(--line);border-radius:14px;padding:20px;text-align:center;background:var(--card);}
+
+  footer{max-width:960px;margin:48px auto 0;padding:20px 20px 0;border-top:2px solid var(--line);font-size:12px;color:var(--ink-soft);line-height:1.6;}
+  footer a{color:var(--pink-deep);font-weight:700;text-decoration:none;}
+
+  .explore-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:12px;width:100%;justify-content:center;
+    background:var(--chip-bg);color:var(--peach-deep);
+    border:2px solid var(--line);font-family:'Nunito',sans-serif;
+    font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;
+    cursor:pointer;
+  }
+  .explore-btn:hover{background:var(--sun);border-color:var(--sun);color:var(--ink);}
+
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(74,46,42,0.45);
+    z-index:100;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--cream);border-radius:22px;max-width:440px;width:100%;
+    max-height:80vh;overflow-y:auto;padding:26px 24px 22px;position:relative;
+    box-shadow:0 20px 50px rgba(74,46,42,0.35);
+  }
+  .modal-close{
+    position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+    border:none;background:var(--chip-bg);color:var(--ink-soft);font-size:15px;cursor:pointer;
+  }
+  .modal-close:hover{background:var(--pink-deep);color:#fff;}
+  .modal-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:22px;margin:0 0 4px;padding-right:30px;}
+  .modal-sub{font-size:13px;color:var(--ink-soft);margin:0 0 18px;}
+  .activity-link{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--card);border:2px solid var(--line);border-radius:14px;
+    padding:12px 14px;margin-bottom:10px;text-decoration:none;color:var(--ink);
+    font-weight:700;font-size:14px;
+  }
+  .activity-link:hover{border-color:var(--pink-deep);background:var(--chip-bg);}
+  .activity-link .arrow{color:var(--pink-deep);font-size:16px;}
+
+  .rank-bubble{
+    position:fixed;top:20px;right:20px;z-index:150;
+    background:var(--card);border:2px solid var(--line);border-radius:18px;
+    padding:14px 16px;box-shadow:0 12px 28px rgba(255,111,145,0.28);
+    min-width:190px;max-width:230px;
+  }
+  .rank-bubble-title{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13.5px;
+    color:var(--ink);margin-bottom:8px;
+  }
+  .rank-empty{font-size:12px;color:var(--ink-soft);line-height:1.4;}
+  .rank-row{
+    display:flex;align-items:center;gap:6px;font-size:12.5px;
+    font-weight:700;color:var(--ink);padding:5px 0;
+  }
+  .rank-num{
+    flex-shrink:0;width:18px;height:18px;border-radius:50%;
+    background:var(--pink-deep);color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;
+  }
+  .rank-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+  .rank-move{
+    background:transparent;border:none;color:var(--peach-deep);
+    cursor:pointer;font-size:12px;padding:0 2px;font-weight:800;line-height:1;flex-shrink:0;
+  }
+  .rank-move:hover:not(:disabled){color:var(--pink-deep);}
+  .rank-move:disabled{opacity:0.25;cursor:not-allowed;}
+  .bubble-submit{
+    width:100%;margin-top:10px;
+    background:linear-gradient(90deg,var(--peach),var(--pink-deep));color:#fff;border:none;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;
+    padding:8px 10px;border-radius:14px;cursor:pointer;
+  }
+  .bubble-submit:disabled{opacity:0.4;cursor:not-allowed;}
+  .bubble-status{font-size:11px;color:var(--pink-deep);font-weight:700;margin-top:6px;min-height:14px;}
+
+  @media (max-width:640px){
+    .rank-bubble{top:auto;bottom:16px;right:16px;left:16px;max-width:none;
+      display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:nowrap;}
+    .rank-bubble-title{margin-bottom:0;white-space:nowrap;}
+    #rankBubbleList{display:flex;gap:10px;overflow-x:auto;flex:1;}
+    .rank-row{padding:0;flex-shrink:0;}
+    .rank-name{max-width:70px;}
+    .bubble-submit{width:auto;margin-top:0;flex-shrink:0;padding:8px 12px;white-space:nowrap;}
+    .bubble-status{display:none;}
+  }
+
+  .chip{display:inline-flex;align-items:center;gap:6px;}
+  .chip-rank{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:16px;height:16px;border-radius:50%;background:var(--pink-deep);
+    color:#fff;font-size:10px;font-weight:800;flex-shrink:0;
+  }
+  .chip-move{
+    background:transparent;border:none;color:var(--peach-deep);
+    cursor:pointer;font-size:12px;padding:0 2px;font-weight:800;line-height:1;
+  }
+  .chip-move:hover:not(:disabled){color:var(--pink-deep);}
+  .chip-move:disabled{opacity:0.25;cursor:not-allowed;}
+
+  @media (max-width:600px){
+    header.wrap{padding:60px 20px 40px;}
+    .namebar{flex-direction:column;align-items:stretch;}
+  }
+</style>
+</head>
+<body>
+
+<div class="rank-bubble" id="rankBubble">
+  <div class="rank-bubble-title">Your ranking</div>
+  <div id="rankBubbleList"><div class="rank-empty">Tap cards to rank your top 3</div></div>
+  <button class="bubble-submit" id="bubbleSubmitBtn" disabled>Submit vote</button>
+  <div class="bubble-status" id="bubbleStatus"></div>
+</div>
+
+<header class="wrap">
+  <h1>The <span class="hl">final five</span></h1>
+  <p class="sub">These five came out on top in round one. Rank your top <strong>three</strong> of just these to break the tie — 1st pick = 3 pts, 2nd = 2, 3rd = 1. Prices still link to a live search. Let's lock this in.</p>
+</header>
+
+<div class="controls wrap">
+  <div class="seg" id="originSeg">
+    <button class="active" data-origin="bay">✈️ From Bay Area</button>
+    <button data-origin="east">✈️ From Boston/MI</button>
+  </div>
+</div>
+
+<div class="namebar wrap" style="max-width:960px;">
+  <label for="nameInput">Your name</label>
+  <input id="nameInput" type="text" placeholder="e.g. Shriya" autocomplete="off">
+  <div class="count"><b id="pickCount">0</b>/3 selected</div>
+</div>
+
+<div class="grid wrap" id="grid" style="max-width:960px;"></div>
+
+<div class="votepanel wrap" style="max-width:960px;">
+  <h2>Your shortlist 💌</h2>
+  <p class="hint">Tap up to 3 cards above, enter your name, then submit. Submitting again with the same name replaces your previous vote. This is a separate vote from round one.</p>
+  <div class="chips" id="chips"><span class="chip empty">Nothing picked yet</span></div>
+  <div class="btnrow">
+    <button class="primary" id="submitBtn" disabled>Submit vote</button>
+    <button class="ghost" id="clearBtn">Clear my vote</button>
+    <span class="status" id="statusMsg"></span>
+  </div>
+</div>
+
+<div class="results wrap" style="max-width:960px;">
+  <h2>Live results 🏆</h2>
+  <p class="hint" id="resultsHint"><span id="resultsHintText">Vote first to unlock everyone else's picks.</span> <button class="ghost" id="refreshBtn" style="padding:4px 10px;font-size:12px;margin-left:2px;display:none;">Refresh</button></p>
+  <div id="resultsList"><div class="empty-state">🔒 Submit your vote above to see how everyone else voted.</div></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<footer class="wrap">
+  Every flight/stay price links to a live search on Kayak or Booking.com pre-filled for Dec 15–22 — click through for the real, current number since fares move daily this close to the holidays. Stay prices were cross-checked against current rate data and padded to cover the taxes, resort fees, and cleaning fees that sites like Booking.com often tack on after the headline price.
+</footer>
+
+<script>
+/* ==========================================================================
+   BACKEND CONFIG — same Apps Script web app as the main poll.
+   Round-2 votes are stored in a separate "Round2" tab; round 1 is untouched.
+   ========================================================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbyd4lC6zDbi3MATPhgqwJAQVj2vPuJkuG7eEuuB65LM544ZAX4VJkgI8AYEy6nZYh2v/exec";
+const ROUND = 2;
+
+async function apiGetAll(){
+  const res = await fetch(API_URL + "?round=" + ROUND, { method: "GET" });
+  if(!res.ok) throw new Error("GET failed: " + res.status);
+  const data = await res.json();
+  return (data && Array.isArray(data.votes)) ? data.votes : [];
+}
+async function apiPost(payload){
+  const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ ...payload, round: ROUND }) });
+  if(!res.ok) throw new Error("POST failed: " + res.status);
+  const data = await res.json();
+  if(!data || !data.ok) throw new Error((data && data.error) || "request failed");
+  return data;
+}
+const apiSubmit = (name, picks) => apiPost({ action: "submit", name, picks });
+const apiDelete = (name) => apiPost({ action: "delete", name });
+
+const DEP = "2026-12-15", RET = "2026-12-22";
+function flightLink(origin, dest){ return `https://www.kayak.com/flights/${origin}-${dest}/${DEP}/${RET}`; }
+function hotelLink(city){ return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city)}&checkin=${DEP}&checkout=${RET}`; }
+
+const ALL = [
+  {id:"cdmx", name:"Mexico City", icon:"🎈", tag:"City sightseeing — history + culture, no beach", dest:"MEX", east:"BOS", city:"Mexico City, Mexico",
+   bay:"$900+ (that week)", eastPrice:"Not yet checked", stay:"$80–$320+/night incl. fees", minBay:900,
+   tags:["Culture","Food"], vibe:[80,10,10],
+   note:"Suggested by Khusbu — hot air balloon over the pyramids, Teotihuacán tours, hot springs into a cave swim, a lucha libre match, and museums.",
+   activities:["Hot air balloon over Teotihuacán pyramids","Templo Mayor & Zócalo walking tour","Grutas de Tolantongo hot springs cave","Lucha libre match at Arena México","Frida Kahlo Museum (Casa Azul)"]},
+  {id:"costarica", name:"Costa Rica / Guanacaste", icon:"🌋", tag:"Volcanoes, zipline, wildlife, beach", dest:"LIR", east:"BOS", city:"Guanacaste, Costa Rica",
+   bay:"$490–$650+", eastPrice:"$421–$600+", stay:"$150–$450+/night incl. fees", minBay:490,
+   tags:["Nature","Beaches"], vibe:[10,65,25],
+   activities:["Arenal Volcano hike & hot springs","Canopy zip-lining tour","Monteverde Cloud Forest walk","Tamarindo surf lesson"]},
+  {id:"oahu", name:"Honolulu / Oahu", icon:"🌊", tag:"No passport, surf + hikes + history", dest:"HNL", east:"BOS", city:"Honolulu, HI",
+   bay:"$299–$900+", eastPrice:"$501–$1,000+", stay:"$225–$500+/night incl. fees", minBay:299,
+   tags:["Beaches","Culture","Nature"], vibe:[25,35,40],
+   activities:["Diamond Head hike","Pearl Harbor memorial tour","North Shore surf watching","Snorkeling at Hanauma Bay"]},
+  {id:"curacao", name:"Curaçao", icon:"🤿", tag:"Diving + colorful Willemstad", dest:"CUR", east:"BOS", city:"Curacao",
+   bay:"$529–$1,500+", eastPrice:"Check packages", stay:"$185–$560+/night incl. fees", minBay:529,
+   tags:["Beaches","Culture","Nature"], vibe:[35,30,35],
+   activities:["Willemstad Handelskade walking tour","Snorkeling at Playa Kalki","Hato Caves tour","Christoffel National Park hike"]},
+  {id:"pv", name:"Puerto Vallarta", icon:"🛶", tag:"Beach town with food + boat culture", dest:"PVR", east:"BOS", city:"Puerto Vallarta, Mexico",
+   bay:"$500–$700", eastPrice:"$600–$850+", stay:"$160–$430+/night incl. fees", minBay:500,
+   tags:["Beaches","Food","Nightlife"], vibe:[35,30,35],
+   activities:["Marietas Islands boat tour","Malecón boardwalk stroll","Sayulita surf town day trip","Yelapa waterfall hike"]},
+];
+
+const MAX_PICKS = 3;
+let picks = [];
+let hasVoted = false;
+let origin = 'bay';
+
+function unlockResults(){
+  hasVoted = true;
+  document.getElementById('resultsHintText').textContent = "Scored across everyone's ballots — 1st pick = 3 pts, 2nd = 2, 3rd = 1.";
+  document.getElementById('refreshBtn').style.display = 'inline-block';
+}
+function lockResults(){
+  hasVoted = false;
+  document.getElementById('resultsHintText').textContent = "Vote first to unlock everyone else's picks.";
+  document.getElementById('refreshBtn').style.display = 'none';
+  document.getElementById('resultsList').innerHTML = '<div class="empty-state">🔒 Submit your vote above to see how everyone else voted.</div>';
+}
+
+function vibeSpan(vibe){
+  const [c,n,r] = vibe;
+  return `<div class="vibebar">
+    <span style="width:${c}%;background:#FFC93C"></span>
+    <span style="width:${n}%;background:#FF9A56"></span>
+    <span style="width:${r}%;background:#FF6F91"></span>
+  </div>
+  <div class="vibe-legend"><span>Culture ${c}%</span><span>Nature ${n}%</span><span>Relax ${r}%</span></div>`;
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const originCode = origin==='bay' ? 'SFO' : 'BOS';
+
+  grid.innerHTML = ALL.map(d => {
+    const flightPrice = origin==='bay' ? d.bay : d.eastPrice;
+    const fLink = flightLink(originCode, d.dest);
+    const hLink = hotelLink(d.city);
+    const rankIdx = picks.indexOf(d.id);
+    return `
+    <div class="card ${rankIdx>-1?'picked':''}" data-id="${d.id}">
+      <div class="heart">${rankIdx>-1 ? (rankIdx+1) : '♥'}</div>
+      <div class="vibe-icon">${d.icon}</div>
+      <p class="card-name">${d.name}</p>
+      <p class="card-tag">${d.tag}</p>
+      <div class="price-line"><span class="lbl">Flight RT</span><div class="pval"><span>${flightPrice}</span><a href="${fLink}" target="_blank" rel="noopener" onclick="event.stopPropagation()">check live →</a></div></div>
+      <div class="price-line"><span class="lbl">Stay</span><div class="pval"><span>${d.stay}</span><a href="${hLink}" target="_blank" rel="noopener" onclick="event.stopPropagation()">check live →</a></div></div>
+      ${vibeSpan(d.vibe)}
+      ${d.note ? `<div class="bonus-note">${d.note}</div>` : ''}
+      <div class="tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <button class="explore-btn" data-explore="${d.id}">🧭 Explore activities</button>
+    </div>
+  `;
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', ()=>togglePick(card.dataset.id));
+  });
+  grid.querySelectorAll('.explore-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openModal(btn.dataset.explore);
+    });
+  });
+}
+
+function activityLink(name, city){
+  return `https://www.google.com/search?q=${encodeURIComponent(name + ' ' + city)}`;
+}
+
+function openModal(id){
+  const d = ALL.find(x=>x.id===id);
+  if(!d) return;
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <p class="modal-title">${d.icon} ${d.name}</p>
+    <p class="modal-sub">A few things worth building the trip around — each opens a search with details, reviews, and booking options.</p>
+    ${(d.activities||[]).map(a=>`
+      <a class="activity-link" href="${activityLink(a, d.city)}" target="_blank" rel="noopener">
+        <span>${a}</span><span class="arrow">↗</span>
+      </a>
+    `).join('')}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function togglePick(id){
+  const idx = picks.indexOf(id);
+  if(idx>-1){ picks.splice(idx,1); }
+  else {
+    if(picks.length>=MAX_PICKS){ setStatus(`You can only pick ${MAX_PICKS} — remove one first.`); return; }
+    picks.push(id);
+  }
+  setStatus('');
+  renderPickState();
+}
+
+function movePick(i, dir){
+  const j = i+dir;
+  if(j<0 || j>=picks.length) return;
+  [picks[i],picks[j]] = [picks[j],picks[i]];
+  renderPickState();
+  renderGrid();
+}
+
+function renderPickState(){
+  document.querySelectorAll('.card').forEach(card=>{
+    const rankIdx = picks.indexOf(card.dataset.id);
+    card.classList.toggle('picked', rankIdx>-1);
+    const heart = card.querySelector('.heart');
+    if(heart) heart.textContent = rankIdx>-1 ? (rankIdx+1) : '♥';
+  });
+  document.getElementById('pickCount').textContent = picks.length;
+
+  const chips = document.getElementById('chips');
+  chips.innerHTML = picks.length===0
+    ? '<span class="chip empty">Nothing picked yet</span>'
+    : picks.map((id,idx)=>{
+        const d = ALL.find(x=>x.id===id);
+        return `<span class="chip">
+          <span class="chip-rank">${idx+1}</span>${d.name}
+          <button class="chip-move" data-idx="${idx}" data-dir="-1" ${idx===0?'disabled':''} title="Move up">↑</button>
+          <button class="chip-move" data-idx="${idx}" data-dir="1" ${idx===picks.length-1?'disabled':''} title="Move down">↓</button>
+        </span>`;
+      }).join('');
+  chips.querySelectorAll('.chip-move').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      movePick(parseInt(btn.dataset.idx,10), parseInt(btn.dataset.dir,10));
+    });
+  });
+
+  document.getElementById('submitBtn').disabled = picks.length===0;
+  const bubbleBtn = document.getElementById('bubbleSubmitBtn');
+  if(bubbleBtn) bubbleBtn.disabled = picks.length===0;
+  renderRankBubble();
+}
+
+function renderRankBubble(){
+  const bubble = document.getElementById('rankBubbleList');
+  if(!bubble) return;
+  bubble.innerHTML = picks.length===0
+    ? '<div class="rank-empty">Tap cards to rank your top 3</div>'
+    : picks.map((id,idx)=>{
+        const d = ALL.find(x=>x.id===id);
+        return `<div class="rank-row">
+          <span class="rank-num">${idx+1}</span><span class="rank-name">${d.icon} ${d.name}</span>
+          <button class="rank-move" data-idx="${idx}" data-dir="-1" ${idx===0?'disabled':''} title="Move up">↑</button>
+          <button class="rank-move" data-idx="${idx}" data-dir="1" ${idx===picks.length-1?'disabled':''} title="Move down">↓</button>
+        </div>`;
+      }).join('');
+  bubble.querySelectorAll('.rank-move').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      movePick(parseInt(btn.dataset.idx,10), parseInt(btn.dataset.dir,10));
+    });
+  });
+}
+
+function setStatus(msg){
+  document.getElementById('statusMsg').textContent = msg;
+  const bubbleStatus = document.getElementById('bubbleStatus');
+  if(bubbleStatus) bubbleStatus.textContent = msg;
+}
+
+async function submitVote(){
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name){ setStatus('Enter your name first.'); return; }
+  if(picks.length===0){ setStatus('Pick at least one place.'); return; }
+  try{
+    setStatus('Saving…');
+    await apiSubmit(name, picks);
+    setStatus('Vote submitted ✓');
+    unlockResults();
+    await loadResults();
+  }catch(e){ setStatus('Could not save — try again.'); console.error(e); }
+}
+
+async function clearVote(){
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name){ setStatus('Enter your name to clear your vote.'); return; }
+  try{
+    setStatus('Clearing…');
+    await apiDelete(name);
+    picks = [];
+    renderPickState();
+    setStatus('Your vote was cleared.');
+    lockResults();
+  }catch(e){ setStatus('Could not clear — try again.'); console.error(e); }
+}
+
+let nameCheckTimer = null;
+async function checkExistingVote(){
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name) return;
+  try{
+    const all = await apiGetAll();
+    const mine = all.find(v => String(v.name).trim().toLowerCase() === name.toLowerCase());
+    if(mine && Array.isArray(mine.picks) && mine.picks.length){
+      picks = mine.picks.slice(0, MAX_PICKS);
+      renderPickState();
+      unlockResults();
+      setStatus('Welcome back — showing your saved vote.');
+      await loadResults();
+    }
+  }catch(e){ /* no existing vote yet, or backend not reachable */ }
+}
+
+async function loadResults(){
+  if(!hasVoted) return;
+  const list = document.getElementById('resultsList');
+  try{
+    const all = await apiGetAll();
+    if(all.length===0){ list.innerHTML = '<div class="empty-state">No votes yet — be the first.</div>'; return; }
+    // Ranked-choice scoring: 1st pick = 3 pts, 2nd = 2, 3rd = 1.
+    const points = {}, ballots = {};
+    ALL.forEach(d=>{ points[d.id]=0; ballots[d.id]=0; });
+    all.forEach(v=>{
+      (v.picks||[]).slice(0, MAX_PICKS).forEach((id,idx)=>{
+        if(points[id]===undefined) return;
+        points[id] += (MAX_PICKS - idx);
+        ballots[id] += 1;
+      });
+    });
+    const ranked = ALL.map(d=>({...d, points:points[d.id], ballots:ballots[d.id]}))
+      .filter(d=>d.points>0)
+      .sort((a,b)=> b.points-a.points || b.ballots-a.ballots || a.name.localeCompare(b.name));
+    if(ranked.length===0){ list.innerHTML = '<div class="empty-state">No votes yet — be the first.</div>'; return; }
+    const max = ranked[0].points;
+    list.innerHTML = ranked.map(d=>`
+      <div class="rbar-row">
+        <div class="rbar-top"><span class="rname">${d.icon} ${d.name}</span><span class="rvotes">${d.points} pt${d.points===1?'':'s'} <span class="rballots">· ${d.ballots} ${d.ballots===1?'ballot':'ballots'}</span></span></div>
+        <div class="rbar-track"><div class="rbar-fill" style="width:${(d.points/max*100).toFixed(0)}%"></div></div>
+      </div>
+    `).join('');
+  }catch(e){ list.innerHTML = '<div class="empty-state">Could not load results yet.</div>'; console.error(e); }
+}
+
+document.getElementById('submitBtn').addEventListener('click', submitVote);
+document.getElementById('bubbleSubmitBtn').addEventListener('click', submitVote);
+document.getElementById('clearBtn').addEventListener('click', clearVote);
+document.getElementById('refreshBtn').addEventListener('click', loadResults);
+document.getElementById('nameInput').addEventListener('blur', ()=>{
+  clearTimeout(nameCheckTimer);
+  nameCheckTimer = setTimeout(checkExistingVote, 150);
+});
+document.querySelectorAll('#originSeg button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#originSeg button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    origin = btn.dataset.origin;
+    renderGrid();
+  });
+});
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='modalOverlay') closeModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape') closeModal();
+});
+
+renderGrid();
+renderPickState();
+</script>
+</body>
+</html>

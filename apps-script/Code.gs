@@ -4,8 +4,14 @@
  * Deploy this as a Google Apps Script Web App bound to a Google Sheet.
  * It stores one row per voter and returns every vote as JSON.
  *
- * Sheet columns (created automatically on first write):
- *   A: name        the voter's name (case-insensitive unique key)
+ * Two independent rounds, each in its own sheet tab:
+ *   round 1 (default) -> tab "Votes"    (the 16-option poll, index.html)
+ *   round 2           -> tab "Round2"   (the 5-finalist runoff, round2.html)
+ * Tabs are created automatically on first write. Round 1 behaves exactly
+ * as before when no round is given, so existing pages keep working.
+ *
+ * Columns in each tab:
+ *   A: name        the voter's name (case-insensitive unique key, per round)
  *   B: picks       JSON array of destination ids, best first, e.g. ["pv","oahu","cdmx"]
  *   C: updated     ISO timestamp of the last change
  *
@@ -17,20 +23,22 @@
  *        - Execute as:   Me
  *        - Who has access: Anyone
  *   4. Authorize when prompted. Copy the Web app URL (ends in /exec).
- *   5. Paste that URL into index.html as API_URL.
+ *   5. Paste that URL into index.html and round2.html as API_URL.
  *
  *   After any edit to this script you must Deploy > Manage deployments >
  *   edit the existing deployment > Version: "New version" > Deploy,
  *   otherwise the live URL keeps running the old code.
  */
 
-var SHEET_NAME = 'Votes';
+var SHEET_NAME = 'Votes';       // round 1
+var SHEET_NAME_R2 = 'Round2';   // round 2
 
-function getSheet_() {
+function sheetForRound_(round) {
+  var name = (String(round) === '2') ? SHEET_NAME_R2 : SHEET_NAME;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sh = ss.getSheetByName(SHEET_NAME);
+  var sh = ss.getSheetByName(name);
   if (!sh) {
-    sh = ss.insertSheet(SHEET_NAME);
+    sh = ss.insertSheet(name);
     sh.appendRow(['name', 'picks', 'updated']);
   }
   return sh;
@@ -52,9 +60,13 @@ function parsePicks_(v) {
   }
 }
 
-/** GET  ->  { ok: true, votes: [ { name, picks: [...] }, ... ] } */
-function doGet() {
-  var sh = getSheet_();
+/**
+ * GET  ?round=2  (omit for round 1)
+ *   -> { ok: true, votes: [ { name, picks: [...] }, ... ] }
+ */
+function doGet(e) {
+  var round = (e && e.parameter && e.parameter.round) || '1';
+  var sh = sheetForRound_(round);
   var values = sh.getDataRange().getValues();
   var votes = [];
   for (var i = 1; i < values.length; i++) {
@@ -62,13 +74,14 @@ function doGet() {
     if (!name) continue;
     votes.push({ name: name, picks: parsePicks_(values[i][1]) });
   }
-  return jsonOut_({ ok: true, votes: votes });
+  return jsonOut_({ ok: true, round: String(round), votes: votes });
 }
 
 /**
  * POST body (text/plain JSON):
- *   { action: "submit", name: "Maya", picks: ["pv","oahu","cdmx"] }
- *   { action: "delete", name: "Maya" }
+ *   { action: "submit", name: "Maya", picks: ["pv","oahu","cdmx"], round: 2 }
+ *   { action: "delete", name: "Maya", round: 2 }
+ * round is optional; omit or 1 for the original poll.
  */
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -79,10 +92,11 @@ function doPost(e) {
       body = JSON.parse(e.postData.contents);
     }
     var action = body.action || 'submit';
+    var round = body.round || '1';
     var name = String(body.name || '').trim();
     if (!name) return jsonOut_({ ok: false, error: 'missing name' });
 
-    var sh = getSheet_();
+    var sh = sheetForRound_(round);
     var values = sh.getDataRange().getValues();
     var rowIndex = -1; // 1-based sheet row number
     for (var i = 1; i < values.length; i++) {
